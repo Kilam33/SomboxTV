@@ -10,7 +10,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
   const [currentStep, setCurrentStep] = useState(0)
 
   const loadingSteps = [
-    'Initializing SomBox',
+    'Initializing SomBox TV',
     'Loading Channels',
     'Preparing Interface',
     'Almost Ready...'
@@ -47,7 +47,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, scale: 1.1 }}
       transition={{ duration: 0.8, ease: "easeInOut" }}
-      className="fixed inset-0 z-50 bg-black flex items-center justify-center overflow-hidden"
+      className="fixed inset-0 z-50 bg-gradient-to-br from-slate-900 via-gray-900 to-black flex items-center justify-center overflow-hidden"
     >
       {/* Animated Background */}
       <div className="absolute inset-0">
@@ -94,7 +94,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
             >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 rounded-full opacity-20 blur-xl" />
               <div className="relative w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-500/50">
-                <span className="text-white font-bold text-2xl">S</span>
+                <span className="text-white font-bold text-2xl">SB</span>
               </div>
             </motion.div>
             
@@ -102,9 +102,9 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent"
+              className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent tracking-wide"
             >
-              SomBox
+              SomBox TV
             </motion.h1>
             
             <motion.p
@@ -133,7 +133,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onLoadingComplete }) => {
 
           {/* Progress Bar */}
           <div className="relative">
-            <div className="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-gray-800/50 backdrop-blur-sm rounded-full overflow-hidden border border-gray-700/30">
               <motion.div
                 className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full relative"
                 initial={{ width: 0 }}

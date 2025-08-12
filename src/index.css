@@ -42,7 +42,7 @@
 
   /* Custom scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 12px;
   }
 
   ::-webkit-scrollbar-track {
@@ -51,7 +51,7 @@
 
   ::-webkit-scrollbar-thumb {
     background: #404040;
-    border-radius: 4px;
+    border-radius: 6px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
@@ -82,16 +82,95 @@
     backdrop-filter: blur(2px);
   }
 
+  /* Enhanced Glass Morphism Effects */
   .glass {
     background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 
   .glass-dark {
     background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Aero Design Effects */
+  .aero-glow {
+    box-shadow: 
+      0 0 20px rgba(59, 130, 246, 0.3),
+      0 0 40px rgba(59, 130, 246, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .aero-border {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Material Design Elevation */
+  .elevation-1 {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  }
+
+  .elevation-2 {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  }
+
+  .elevation-3 {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  }
+
+  .elevation-4 {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  }
+
+  .elevation-5 {
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+  }
+
+  /* Stage and Room Effects */
+  .stage-shadow {
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.4),
+      0 10px 20px rgba(0, 0, 0, 0.3),
+      0 5px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .stage-lighting {
+    background: linear-gradient(
+      180deg,
+      rgba(59, 130, 246, 0.1) 0%,
+      rgba(147, 51, 234, 0.05) 50%,
+      transparent 100%
+    );
+  }
+
+  .room-depth {
+    background: linear-gradient(
+      135deg,
+      rgba(31, 41, 55, 0.8) 0%,
+      rgba(17, 24, 39, 0.9) 50%,
+      rgba(0, 0, 0, 1) 100%
+    );
+  }
+
+  .ambient-glow {
+    box-shadow: 
+      0 0 60px rgba(59, 130, 246, 0.2),
+      0 0 120px rgba(147, 51, 234, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .theatrical-focus {
+    box-shadow: 
+      0 0 40px rgba(59, 130, 246, 0.4),
+      0 0 80px rgba(59, 130, 246, 0.2),
+      0 0 120px rgba(59, 130, 246, 0.1);
   }
 }
 
@@ -123,18 +202,39 @@
   animation: shimmer 2s ease-in-out infinite;
 }
 
-/* Smooth transitions for all interactive elements */
-button, a, [role="button"] {
-  transition: all 0.2s ease-in-out;
-}
-
-/* Focus styles */
+/* Enhanced TV-Friendly Focus Styles */
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
-[role="button"]:focus-visible {
-  outline: 2px solid rgb(59 130 246);
-  outline-offset: 2px;
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 4px solid rgb(59 130 246);
+  outline-offset: 4px;
+  border-radius: 12px;
+  transition: all 0.3s ease-in-out;
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Enhanced focus for TV navigation */
+.tv-focus:focus-visible {
+  outline: 6px solid rgb(59 130 246);
+  outline-offset: 6px;
+  transform: scale(1.05);
+  box-shadow: 
+    0 0 30px rgba(59, 130, 246, 0.6),
+    0 0 60px rgba(59, 130, 246, 0.3);
+}
+
+/* Smooth transitions for all interactive elements */
+button, a, [role="button"], [tabindex] {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* TV-friendly button hover states */
+button:hover,
+[role="button"]:hover {
+  transform: scale(1.02);
 }
 
 /* Video player custom styles */
@@ -154,42 +254,226 @@ video::-o-media-controls {
   display: none !important;
 }
 
-/* Custom range input styles */
+/* Custom range input styles for TV */
 input[type="range"] {
   -webkit-appearance: none;
   background: transparent;
   cursor: pointer;
+  height: 8px;
 }
 
 input[type="range"]::-webkit-slider-track {
-  background: rgba(255, 255, 255, 0.2);
-  height: 4px;
-  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.3);
+  height: 8px;
+  border-radius: 4px;
 }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  height: 16px;
-  width: 16px;
+  height: 24px;
+  width: 24px;
   border-radius: 50%;
   background: #3b82f6;
   cursor: pointer;
-  border: 2px solid white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 3px solid white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease-in-out;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
 input[type="range"]::-moz-range-track {
-  background: rgba(255, 255, 255, 0.2);
-  height: 4px;
-  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.3);
+  height: 8px;
+  border-radius: 4px;
 }
 
 input[type="range"]::-moz-range-thumb {
-  height: 16px;
-  width: 16px;
+  height: 24px;
+  width: 24px;
   border-radius: 50%;
   background: #3b82f6;
   cursor: pointer;
-  border: 2px solid white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 3px solid white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease-in-out;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* TV-friendly text sizes */
+@media (min-width: 1920px) {
+  .text-sm {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+  
+  .text-base {
+    font-size: 1.25rem;
+    line-height: 1.875rem;
+  }
+  
+  .text-lg {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+  
+  .text-xl {
+    font-size: 1.75rem;
+    line-height: 2.25rem;
+  }
+  
+  .text-2xl {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+  
+  .text-3xl {
+    font-size: 2.5rem;
+    line-height: 3rem;
+  }
+  
+  .text-4xl {
+    font-size: 3rem;
+    line-height: 3.5rem;
+  }
+}
+
+/* Enhanced contrast for TV viewing */
+.tv-text {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.tv-card {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Smooth scrolling for TV navigation */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Prevent text selection during navigation */
+.tv-navigation * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* TV-friendly loading states */
+.tv-loading {
+  animation: tv-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes tv-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Aero/Material Design Specific Styles */
+.aero-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.aero-button {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(59, 130, 246, 0.6));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 4px 16px rgba(59, 130, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.aero-button:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(59, 130, 246, 0.7));
+  box-shadow: 
+    0 6px 20px rgba(59, 130, 246, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Enhanced glass morphism for cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Focus ring animations */
+@keyframes focus-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.focus-ring {
+  animation: focus-ring 2s infinite;
+}
+
+/* Stage lighting animations */
+@keyframes stage-light {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+
+.stage-light {
+  animation: stage-light 4s ease-in-out infinite;
+}
+
+/* Room atmosphere effects */
+@keyframes ambient-drift {
+  0%, 100% {
+    transform: translateX(0) translateY(0);
+  }
+  25% {
+    transform: translateX(10px) translateY(-5px);
+  }
+  50% {
+    transform: translateX(-5px) translateY(10px);
+  }
+  75% {
+    transform: translateX(-10px) translateY(-5px);
+  }
+}
+
+.ambient-drift {
+  animation: ambient-drift 20s ease-in-out infinite;
 }

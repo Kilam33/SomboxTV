@@ -2,28 +2,34 @@ import React, { useState, useEffect } from 'react'
 import { Play, Info, Volume2, VolumeX } from 'lucide-react'
 import { Button } from './ui/button'
 import { motion } from 'framer-motion'
-import { mockFeaturedContent } from '../data/mockData'
+import { featuredContent } from '../data/mockData'
 import { formatDuration } from '../lib/utils'
 
 interface HeroSectionProps {
   onPlay: (contentId: string) => void
+  isMovieMode?: boolean
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ onPlay }) => {
+const HeroSection: React.FC<HeroSectionProps> = ({ onPlay, isMovieMode = false }) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isMuted, setIsMuted] = useState(true)
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => 
-        prevIndex === mockFeaturedContent.length - 1 ? 0 : prevIndex + 1
+        prevIndex === featuredContent.length - 1 ? 0 : prevIndex + 1
       )
     }, 8000)
 
     return () => clearInterval(interval)
   }, [])
 
-  const currentContent = mockFeaturedContent[currentIndex]
+  const currentContent = featuredContent[currentIndex]
+
+  // Only show hero section in movie mode
+  if (!isMovieMode) {
+    return null
+  }
 
   return (
     <section className="relative h-[70vh] min-h-[600px] overflow-hidden">
@@ -120,7 +126,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onPlay }) => {
 
           {/* Progress Indicators */}
           <div className="absolute bottom-8 left-4 flex space-x-2">
-            {mockFeaturedContent.map((_, index) => (
+            {featuredContent.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
