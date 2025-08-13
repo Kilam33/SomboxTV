@@ -272,7 +272,10 @@ const ChannelGuide: React.FC<ChannelGuideProps> = ({
     return nearestIndex
   }
 
-  const handleScroll = () => {
+  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    // Prevent scroll propagation to parent containers
+    event.stopPropagation()
+    
     if (isScrolling) return
     
     setIsScrolling(true)
@@ -413,7 +416,15 @@ const ChannelGuide: React.FC<ChannelGuideProps> = ({
   }
 
   return (
-    <div className="min-h-screen text-white flex bg-gray-900" onKeyDown={handleKeyDown} tabIndex={-1}>
+    <div 
+      className="h-screen text-white flex bg-gray-900 overflow-hidden" 
+      onKeyDown={handleKeyDown} 
+      tabIndex={-1}
+      onWheel={(e) => {
+        // Prevent wheel events on the main container to avoid page scrolling
+        e.preventDefault()
+      }}
+    >
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-30 p-6 bg-gradient-to-b from-gray-900/90 to-transparent">
         <div className="flex items-center justify-between">
@@ -458,9 +469,9 @@ const ChannelGuide: React.FC<ChannelGuideProps> = ({
       </div>
 
              {/* Center Panel - Channel Cards */}
-       <div className="flex-1 flex">
+       <div className="flex-1 flex overflow-hidden">
                    {/* Floating Filter Buttons - Left Side */}
-          <div className="flex flex-col space-y-4 justify-center ml-8 mr-8">
+          <div className="flex flex-col space-y-4 justify-center ml-8 mr-8 flex-shrink-0">
             {/* All TV Button */}
             <button
               onClick={() => setShowFavorites(false)}
@@ -494,15 +505,19 @@ const ChannelGuide: React.FC<ChannelGuideProps> = ({
             </button>
           </div>
          
-         <div className="w-1/3 max-w-md">
-           <div 
-             ref={containerRef}
-             className="overflow-y-auto scrollbar-hide relative h-screen"
-             style={{
-               scrollBehavior: 'smooth'
-             }}
-             onScroll={handleScroll}
-           >
+         <div className="w-1/3 max-w-md overflow-hidden">
+                       <div 
+              ref={containerRef}
+              className="overflow-y-auto scrollbar-hide relative h-full"
+              style={{
+                scrollBehavior: 'smooth'
+              }}
+              onScroll={handleScroll}
+              onWheel={(e) => {
+                // Prevent wheel events from bubbling up to parent containers
+                e.stopPropagation()
+              }}
+            >
              <div className="px-4 space-y-4" style={{ paddingTop: '40vh', paddingBottom: '40vh' }}>
                {filteredChannels.map((channel, index) => {
                 const isFocused = focusedChannelIndex === index
@@ -624,7 +639,7 @@ const ChannelGuide: React.FC<ChannelGuideProps> = ({
         </div>
 
                  {/* Right Panel - Video Preview */}
-         <div className="w-2/3 relative">
+         <div className="w-2/3 relative overflow-hidden">
           {selectedChannel ? (
             <div 
               className="w-full h-full relative overflow-hidden bg-gray-800/40 backdrop-blur-sm border-l border-gray-700/40"
