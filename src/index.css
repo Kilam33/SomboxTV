@@ -2,6 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom scrollbar hiding for TV navigation */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+/* Enhanced focus styles for TV remote navigation */
+.tv-focus:focus {
+  outline: 3px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for TV navigation */
+.tv-transition {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* High contrast focus indicator for TV viewing */
+.tv-focus-indicator {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5), 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
 @layer base {
   :root {
     --background: 0 0% 0%;
@@ -40,22 +66,19 @@
     scroll-behavior: smooth;
   }
 
-  /* Custom scrollbar */
+  /* TV Interface - Hide scrollbars */
   ::-webkit-scrollbar {
-    width: 12px;
+    display: none;
   }
 
-  ::-webkit-scrollbar-track {
-    background: #1a1a1a;
+  /* Hide scrollbars for Firefox */
+  * {
+    scrollbar-width: none;
   }
 
-  ::-webkit-scrollbar-thumb {
-    background: #404040;
-    border-radius: 6px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: #505050;
+  /* Hide scrollbars for IE/Edge */
+  * {
+    -ms-overflow-style: none;
   }
 }
 

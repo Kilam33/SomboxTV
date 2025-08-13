@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Tv, Film, Radio, Search, Settings, User, Mic, Cloud } from 'lucide-react'
+import { Tv, Film, Radio, Search, Settings, User, Mic, Cloud, Music, Newspaper, Trophy, Baby, BookOpen, Laugh } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface HomePageProps {
-  onCategorySelect: (category: string) => void
+  onCategorySelect: (category: string, channelNumber: number) => void
   onSearch: () => void
   onSettings: () => void
   onProfile: () => void
@@ -11,17 +11,18 @@ interface HomePageProps {
   setFocusedElement?: (element: string | null) => void
 }
 
-interface CategoryCard {
+interface ChannelCard {
   id: string
   title: string
   subtitle: string
   icon: React.ComponentType<any>
-  count: string
+  number: number
   isLive?: boolean
   isPlaying?: boolean
   playingText?: string
-  lastUpdate?: string
-  playingImage?: string
+  currentShow?: string
+  nextShow?: string
+  viewers?: string
 }
 
 interface ButtonProps {
@@ -68,31 +69,100 @@ const HomePage: React.FC<HomePageProps> = ({
     return () => clearInterval(timer)
   }, [])
 
-  const categories: CategoryCard[] = [
+  const channels: ChannelCard[] = [
     {
-      id: 'live-tv',
-      title: "Live TV's",
-      subtitle: "+5000 Channels",
+      id: 'somali-tv',
+      title: "Somali TV",
+      subtitle: "Main Channel",
       icon: Tv,
-      count: "+5000 Channels",
-      lastUpdate: "Last Update 2 day ago"
+      number: 1,
+      isLive: true,
+      currentShow: "Somali News",
+      nextShow: "Cultural Program",
+      viewers: "15.2K watching"
+    },
+    {
+      id: 'news',
+      title: "News",
+      subtitle: "Breaking News",
+      icon: Newspaper,
+      number: 2,
+      isLive: true,
+      currentShow: "Morning News",
+      nextShow: "Weather Update",
+      viewers: "8.5K watching"
+    },
+    {
+      id: 'sports',
+      title: "Sports",
+      subtitle: "Live Sports",
+      icon: Trophy,
+      number: 3,
+      isLive: true,
+      currentShow: "Football Match",
+      nextShow: "Basketball",
+      viewers: "12.8K watching"
+    },
+    {
+      id: 'wildlife',
+      title: "Wildlife",
+      subtitle: "Nature & Animals",
+      icon: BookOpen,
+      number: 4,
+      currentShow: "African Safari",
+      nextShow: "Ocean Life",
+      viewers: "3.1K watching"
+    },
+    {
+      id: 'kids-tv',
+      title: "Kids TV",
+      subtitle: "Children's Shows",
+      icon: Baby,
+      number: 5,
+      currentShow: "Cartoon Time",
+      nextShow: "Educational",
+      viewers: "6.7K watching"
     },
     {
       id: 'movies',
       title: "Movies",
-      subtitle: "+1200 Series",
+      subtitle: "Latest Films",
       icon: Film,
-      count: "+1200 Series",
-      isLive: true
+      number: 6,
+      currentShow: "Action Movie",
+      nextShow: "Comedy Show",
+      viewers: "9.3K watching"
     },
     {
       id: 'radio',
-      title: "Radios",
-      subtitle: "+500 Stations",
+      title: "Radio",
+      subtitle: "Music & Talk",
       icon: Radio,
-      count: "+500 Stations",
-      isPlaying: true,
-      playingText: "Playing... Azad Mahsa Am"
+      number: 7,
+      playingText: "Somali Radio",
+      currentShow: "Radio Mix",
+      nextShow: "Radio Mix",
+      viewers: "4.2K watching"
+    },
+    {
+      id: 'docuseries',
+      title: "Docuseries",
+      subtitle: "Real Stories",
+      icon: BookOpen,
+      number: 8,
+      currentShow: "History Series",
+      nextShow: "Science Show",
+      viewers: "2.8K watching"
+    },
+    {
+      id: 'entertainment',
+      title: "Entertainment",
+      subtitle: "Fun & Shows",
+      icon: Laugh,
+      number: 9,
+      currentShow: "Comedy Show",
+      nextShow: "Variety Program",
+      viewers: "7.1K watching"
     }
   ]
 
@@ -121,10 +191,11 @@ const HomePage: React.FC<HomePageProps> = ({
         <div className="flex items-center space-x-8">
           {/* Logo */}
           <div className="flex items-center space-x-4">
+          <span className="text-white text-2xl font-bold">SomBox</span>
             <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-              <span className="text-black font-bold text-lg">MI</span>
+              <span className="text-black font-bold text-lg">TV</span>
             </div>
-            <span className="text-white text-2xl font-bold">IPTV</span>
+            
           </div>
 
           {/* Search */}
@@ -165,103 +236,225 @@ const HomePage: React.FC<HomePageProps> = ({
 
       {/* Cards Container */}
       <div className="relative z-20 flex-1 flex items-center justify-center px-12 py-8">
-        <div className="w-full max-w-5xl">
-          {/* Category Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {categories.map((category, index) => {
-              const isFocused = focusedElement === `category-${index}`
-              const IconComponent = category.icon
-              
-              return (
-                <motion.div
-                  key={category.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="relative group"
-                >
-                                     {/* Focus indicator */}
-                   <AnimatePresence>
-                     {isFocused && (
-                                               <motion.div
+        <div className="w-full max-w-7xl">
+          {/* Channel Cards */}
+          <div className="flex flex-col space-y-8">
+            {/* First Row - 4 Most Used Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              {channels.slice(0, 4).map((channel, index) => {
+                const isFocused = focusedElement === `channel-${index}`
+                const IconComponent = channel.icon
+                
+                return (
+                  <motion.div
+                    key={channel.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="relative group"
+                  >
+                    {/* Focus indicator */}
+                    <AnimatePresence>
+                      {isFocused && (
+                        <motion.div
                           initial={{ scaleX: 0, opacity: 0 }}
                           animate={{ scaleX: 1, opacity: 1 }}
                           exit={{ scaleX: 0, opacity: 0 }}
                           transition={{ duration: 0.2 }}
-                          className="absolute -bottom-2 w-20 h-0.5 bg-white rounded-full"
-                          style={{ left: '50%', transform: 'translateX(-50%)' }}
+                          className="absolute -bottom-4 w-20 h-0.5 bg-white rounded-full"
+                          style={{ left: '39%', transform: 'translateX(-50%)' }}
                         />
-                     )}
-                   </AnimatePresence>
-                  
-                  <motion.button
-                    onClick={() => onCategorySelect(category.title)}
-                    className={`relative w-full h-96 rounded-2xl border border-gray-700/40 transition-all duration-300 overflow-hidden backdrop-blur-sm ${
-                      isFocused 
-                        ? 'bg-gray-900/60 border-blue-500/50 shadow-2xl transform scale-105 shadow-blue-500/20' 
-                        : 'bg-gray-900/40 hover:bg-gray-800/50 hover:border-gray-600/50 shadow-lg'
-                    }`}
-                    onFocus={() => setFocusedElement?.(`category-${index}`)}
-                    onBlur={() => focusedElement === `category-${index}` && setFocusedElement?.(null)}
-                    tabIndex={0}
-                  >
-                    {/* Card Content */}
-                    <div className="relative z-10 h-full flex flex-col justify-between p-8">
-                      {/* Top Section */}
-                      <div className="flex justify-between items-start">
-                        {category.lastUpdate && (
-                          <span className="text-gray-400 text-xs px-2 py-1 bg-gray-700/50 rounded">
-                            {category.lastUpdate}
+                      )}
+                    </AnimatePresence>
+                    
+                    <motion.button
+                      onClick={() => onCategorySelect(channel.title, channel.number)}
+                      className={`relative w-full h-72 rounded-2xl border border-gray-700/40 transition-all duration-300 overflow-hidden backdrop-blur-sm ${
+                        isFocused 
+                          ? 'bg-gray-900/60 border-blue-500/50 shadow-2xl transform scale-105 shadow-blue-500/20' 
+                          : 'bg-gray-900/40 hover:bg-gray-800/50 hover:border-gray-600/50 shadow-lg'
+                      }`}
+                      onFocus={() => setFocusedElement?.(`channel-${index}`)}
+                      onBlur={() => focusedElement === `channel-${index}` && setFocusedElement?.(null)}
+                      tabIndex={0}
+                    >
+                      {/* Card Content */}
+                      <div className="relative z-10 h-full flex flex-col justify-between p-6">
+                        {/* Top Section */}
+                        <div className="flex justify-between items-start">
+                          <div className="flex items-center space-x-2">
+                            {channel.isLive && (
+                              <div className="bg-red-500 text-white px-2 py-1 rounded text-xs font-medium">
+                                LIVE
+                              </div>
+                            )}
+                            {channel.isPlaying && (
+                              <div className="flex items-center space-x-1 text-green-400 text-xs">
+                                <span>▶</span>
+                                <span>{channel.playingText}</span>
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-gray-400 text-xs">
+                            {channel.viewers}
                           </span>
-                        )}
-                        {category.isLive && (
-                          <div className="bg-orange-500 text-white px-2 py-1 rounded text-xs font-medium">
-                            LIVE
-                          </div>
-                        )}
-                        {category.isPlaying && (
-                          <div className="flex items-center space-x-1 text-gray-300 text-xs">
-                            <span>▶</span>
-                            <span>{category.playingText}</span>
-                          </div>
-                        )}
-                      </div>
+                        </div>
 
-                      {/* Center Icon */}
-                      <div className="flex-1 flex items-center justify-center">
-                        <motion.div 
-                          className={`w-28 h-28 rounded-full border-2 flex items-center justify-center transition-all duration-300 backdrop-blur-sm ${
-                            isFocused 
-                              ? 'border-blue-400 bg-blue-500/20 shadow-lg shadow-blue-500/30' 
-                              : 'border-gray-600 group-hover:border-blue-400 group-hover:bg-blue-500/10'
-                          }`}
-                          animate={{
-                            scale: isFocused ? 1.05 : 1
-                          }}
+                        {/* Center Number */}
+                        <div className="flex-1 flex items-center justify-center">
+                          <motion.div 
+                            className={`w-20 h-20 rounded-full border-4 flex items-center justify-center transition-all duration-300 backdrop-blur-sm ${
+                              isFocused 
+                                ? 'border-blue-400 bg-blue-500/20 shadow-lg shadow-blue-500/30' 
+                                : 'border-gray-600 group-hover:border-blue-400 group-hover:bg-blue-500/10'
+                            }`}
+                            animate={{
+                              scale: isFocused ? 1.05 : 1
+                            }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <span className={`text-3xl font-bold transition-colors duration-300 ${
+                              isFocused ? 'text-white' : 'text-gray-400 group-hover:text-white'
+                            }`}>
+                              {channel.number}
+                            </span>
+                          </motion.div>
+                        </div>
+
+                        {/* Bottom Section */}
+                        <div className="text-center">
+                          <h2 className={`text-lg font-semibold mb-1 transition-colors duration-300 ${
+                            isFocused ? 'text-white' : 'text-gray-300 group-hover:text-white'
+                          }`}>
+                            {channel.title}
+                          </h2>
+                          <p className="text-gray-500 text-sm mb-2">
+                            {channel.subtitle}
+                          </p>
+                          {channel.currentShow && (
+                            <div className="text-xs text-gray-400">
+                              <div>Now: {channel.currentShow}</div>
+                              {channel.nextShow && (
+                                <div>Next: {channel.nextShow}</div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </motion.button>
+                  </motion.div>
+                )
+              })}
+            </div>
+
+            {/* Second Row - 5 Remaining Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+              {channels.slice(4, 9).map((channel, index) => {
+                const actualIndex = index + 4
+                const isFocused = focusedElement === `channel-${actualIndex}`
+                const IconComponent = channel.icon
+                
+                return (
+                  <motion.div
+                    key={channel.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: (actualIndex) * 0.1 }}
+                    className="relative group"
+                  >
+                    {/* Focus indicator */}
+                    <AnimatePresence>
+                      {isFocused && (
+                        <motion.div
+                          initial={{ scaleX: 0, opacity: 0 }}
+                          animate={{ scaleX: 1, opacity: 1 }}
+                          exit={{ scaleX: 0, opacity: 0 }}
                           transition={{ duration: 0.2 }}
-                        >
-                          <IconComponent className={`w-12 h-12 transition-colors duration-300 ${
-                            isFocused ? 'text-white' : 'text-gray-400 group-hover:text-white'
-                          }`} />
-                        </motion.div>
-                      </div>
+                          className="absolute -bottom-4 w-20 h-0.5 bg-white rounded-full"
+                          style={{ left: '39%', transform: 'translateX(-50%)' }}
+                        />
+                      )}
+                    </AnimatePresence>
+                    
+                    <motion.button
+                      onClick={() => onCategorySelect(channel.title, channel.number)}
+                      className={`relative w-full h-72 rounded-2xl border border-gray-700/40 transition-all duration-300 overflow-hidden backdrop-blur-sm ${
+                        isFocused 
+                          ? 'bg-gray-900/60 border-blue-500/50 shadow-2xl transform scale-105 shadow-blue-500/20' 
+                          : 'bg-gray-900/40 hover:bg-gray-800/50 hover:border-gray-600/50 shadow-lg'
+                      }`}
+                      onFocus={() => setFocusedElement?.(`channel-${actualIndex}`)}
+                      onBlur={() => focusedElement === `channel-${actualIndex}` && setFocusedElement?.(null)}
+                      tabIndex={0}
+                    >
+                      {/* Card Content */}
+                      <div className="relative z-10 h-full flex flex-col justify-between p-6">
+                        {/* Top Section */}
+                        <div className="flex justify-between items-start">
+                          <div className="flex items-center space-x-2">
+                            {channel.isLive && (
+                              <div className="bg-red-500 text-white px-2 py-1 rounded text-xs font-medium">
+                                LIVE
+                              </div>
+                            )}
+                            {channel.isPlaying && (
+                              <div className="flex items-center space-x-1 text-green-400 text-xs">
+                                <span>▶</span>
+                                <span>{channel.playingText}</span>
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-gray-400 text-xs">
+                            {channel.viewers}
+                          </span>
+                        </div>
 
-                      {/* Bottom Section */}
-                      <div className="text-center">
-                        <h2 className={`text-2xl font-semibold mb-2 transition-colors duration-300 ${
-                          isFocused ? 'text-white' : 'text-gray-300 group-hover:text-white'
-                        }`}>
-                          {category.title}
-                        </h2>
-                        <p className="text-gray-500 text-base">
-                          {category.count}
-                        </p>
+                        {/* Center Number */}
+                        <div className="flex-1 flex items-center justify-center">
+                          <motion.div 
+                            className={`w-20 h-20 rounded-full border-4 flex items-center justify-center transition-all duration-300 backdrop-blur-sm ${
+                              isFocused 
+                                ? 'border-blue-400 bg-blue-500/20 shadow-lg shadow-blue-500/30' 
+                                : 'border-gray-600 group-hover:border-blue-400 group-hover:bg-blue-500/10'
+                            }`}
+                            animate={{
+                              scale: isFocused ? 1.05 : 1
+                            }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <span className={`text-3xl font-bold transition-colors duration-300 ${
+                              isFocused ? 'text-white' : 'text-gray-400 group-hover:text-white'
+                            }`}>
+                              {channel.number}
+                            </span>
+                          </motion.div>
+                        </div>
+
+                        {/* Bottom Section */}
+                        <div className="text-center">
+                          <h2 className={`text-lg font-semibold mb-1 transition-colors duration-300 ${
+                            isFocused ? 'text-white' : 'text-gray-300 group-hover:text-white'
+                          }`}>
+                            {channel.title}
+                          </h2>
+                          <p className="text-gray-500 text-sm mb-2">
+                            {channel.subtitle}
+                          </p>
+                          {channel.currentShow && (
+                            <div className="text-xs text-gray-400">
+                              <div>Now: {channel.currentShow}</div>
+                              {channel.nextShow && (
+                                <div>Next: {channel.nextShow}</div>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </motion.button>
-                </motion.div>
-              )
-            })}
+                    </motion.button>
+                  </motion.div>
+                )
+              })}
+            </div>
           </div>
         </div>
       </div>

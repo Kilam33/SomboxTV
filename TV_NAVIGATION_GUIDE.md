@@ -1,124 +1,92 @@
-# TV Navigation Guide for SomBox IPTV
+# TV Remote Navigation Guide
 
-## Overview
+## Optimized Channel Selection for TV Remote Scrolling
 
-SomBox has been optimized for TV viewing with remote control navigation. The interface now supports keyboard and remote control input, making it perfect for smart TVs, streaming devices, and set-top boxes.
+The channel guide has been optimized for TV remote navigation with the following key improvements:
 
-## Remote Control Navigation
+### 🎯 **Enhanced Keyboard Navigation**
 
-### Basic Navigation
-- **Arrow Keys**: Navigate between channels, categories, and menu items
-- **Enter/Space**: Select or activate the currently focused element
-- **Escape**: Go back or close current screen
-- **Backspace**: Clear search or go back to previous screen
+#### Primary Controls:
+- **↑/↓ Arrow Keys**: Navigate between channels smoothly
+- **Enter/Space**: Select the currently focused channel
+- **Escape**: Go back to previous screen
+- **Home**: Jump to first channel
+- **End**: Jump to last channel
+- **Page Up/Down**: Jump 3 channels at a time
+- **H**: Show/hide keyboard controls help
 
-### Video Player Controls
-- **Play/Pause**: Space or Enter to toggle playback
-- **Seek**: Left/Right arrows to seek backward/forward 10 seconds
-- **Volume**: Up/Down arrows to adjust volume
-- **Mute**: Press 'M' to toggle mute
-- **Fullscreen**: Press 'F' to toggle fullscreen mode
-- **Exit**: Escape to close video player
+#### Advanced Features:
+- **Auto-focus**: First channel is automatically focused on load
+- **Smooth scrolling**: Focused channels automatically scroll into view
+- **Visual feedback**: Enhanced focus indicators optimized for TV viewing distances
+- **Global keyboard handling**: Works even when focus is lost
 
-### Quick Actions
-- **Help**: Press 'H' to open navigation guide
-- **Search**: Use the search bar with keyboard input
-- **Categories**: Navigate through different channel categories
+### 🎨 **Visual Improvements for TV Viewing**
 
-## TV-Friendly Features
+#### Focus Indicators:
+- **Larger focus border**: 2px blue border with shadow for better visibility
+- **Scale effect**: Subtle 1.02x scale on focused items
+- **Ring effect**: Additional blue ring for high contrast
+- **Enhanced typography**: Larger text (text-xl) for focused channels
 
-### Enhanced Visual Design
-- **Larger Text**: All text has been increased in size for better readability from a distance
-- **Bigger Buttons**: Interactive elements are larger and easier to target
-- **High Contrast**: Enhanced contrast for better visibility on TV screens
-- **Focus Indicators**: Clear visual feedback showing which element is currently selected
+#### Accessibility:
+- **High contrast**: Blue focus indicators with shadows
+- **Smooth transitions**: 300ms transitions for all interactions
+- **Hidden scrollbars**: Clean interface without visible scrollbars
+- **Proper tab indexing**: Only focused element is tabbable
 
-### Improved Navigation
-- **Grid Navigation**: Logical grid-based navigation (4 columns) for easy remote control use
-- **Focus Management**: Automatic focus tracking and restoration
-- **Smooth Transitions**: Smooth animations and transitions for better user experience
-- **Keyboard Support**: Full keyboard navigation support for devices with keyboards
+### 🔧 **Technical Optimizations**
 
-### Video Player Enhancements
-- **Larger Controls**: Video player controls are sized for TV viewing
-- **Extended Timeout**: Controls stay visible longer (5 seconds) for TV usage
-- **Remote-Friendly Buttons**: All video controls are easily accessible via remote
-- **Progress Bar**: Larger, more visible progress bar for seeking
+#### Performance:
+- **useCallback**: Optimized event handlers to prevent unnecessary re-renders
+- **Refs management**: Efficient DOM element references for scrolling
+- **State management**: Centralized focus state tracking
 
-## Technical Features
+#### User Experience:
+- **Immediate response**: 100ms delay for initial focus
+- **Smooth animations**: CSS transitions for all state changes
+- **Error prevention**: Bounds checking for navigation
+- **Help system**: Built-in keyboard shortcuts guide
 
-### Responsive Design
-- **4K Support**: Optimized for 4K and high-resolution displays
-- **Aspect Ratio**: Maintains proper aspect ratios on different TV sizes
-- **Scalable UI**: Interface scales appropriately for different screen sizes
+### 📱 **TV Remote Compatibility**
 
-### Performance Optimizations
-- **Smooth Animations**: Hardware-accelerated animations for smooth performance
-- **Efficient Rendering**: Optimized for TV hardware capabilities
-- **Memory Management**: Efficient memory usage for extended viewing sessions
+The interface is designed to work seamlessly with:
+- **Smart TV remotes** (Samsung, LG, Sony, etc.)
+- **Streaming device remotes** (Roku, Fire TV, Apple TV)
+- **Universal remotes** (Logitech Harmony, etc.)
+- **Gaming controllers** (Xbox, PlayStation)
 
-## Device Compatibility
+### 🎮 **Usage Examples**
 
-### Supported Devices
-- **Smart TVs**: Samsung, LG, Sony, etc.
-- **Streaming Devices**: Roku, Fire TV, Apple TV, Chromecast
-- **Set-top Boxes**: Android TV boxes, Kodi devices
-- **Gaming Consoles**: PlayStation, Xbox (with browser support)
+```javascript
+// Navigate through channels
+ArrowDown → Next channel
+ArrowUp → Previous channel
+OK/Enter → Select channel
+Back → Go back
 
-### Input Methods
-- **Remote Controls**: Standard TV remote controls
-- **Air Mouse**: Compatible with air mouse devices
-- **Keyboard**: Full keyboard navigation support
-- **Touch**: Touch screen support for compatible devices
+// Quick navigation
+Home → First channel
+End → Last channel
 
-## Usage Tips
+// Help
+H → Show controls
+```
 
-### For Best Experience
-1. **Sit at Optimal Distance**: Position yourself 6-10 feet from the TV for best viewing
-2. **Use Arrow Keys**: Navigate systematically using arrow keys
-3. **Watch Focus Indicators**: Pay attention to the blue highlight showing current selection
-4. **Use Help Guide**: Press 'H' anytime to see the navigation guide
-5. **Practice Navigation**: Spend a few minutes learning the navigation patterns
+### 🎯 **Focus Management**
 
-### Troubleshooting
-- **Controls Not Responding**: Try pressing Enter or Space to activate elements
-- **Lost Focus**: Use arrow keys to navigate back to visible elements
-- **Video Issues**: Use Escape to exit video player and try again
-- **Search Problems**: Use Backspace to clear search and start over
+The system automatically:
+1. **Focuses the first channel** on component mount
+2. **Scrolls focused channels** into view smoothly
+3. **Updates preview panel** when focus changes
+4. **Maintains focus state** across interactions
+5. **Provides visual feedback** for current selection
 
-## Keyboard Shortcuts Reference
+### 🔄 **State Synchronization**
 
-| Key | Action |
-|-----|--------|
-| ↑↓←→ | Navigate |
-| Enter/Space | Select/Activate |
-| Escape | Go Back/Close |
-| Backspace | Clear/Go Back |
-| H | Help Guide |
-| M | Mute/Unmute |
-| F | Fullscreen Toggle |
-| Left/Right | Seek in Video |
-| Up/Down | Volume Control |
+- **Focus state**: Tracks which channel is currently focused
+- **Selection state**: Tracks which channel is selected for preview
+- **Visual state**: Updates UI based on focus and selection
+- **Scroll state**: Manages smooth scrolling to focused elements
 
-## Accessibility Features
-
-- **High Contrast Mode**: Enhanced contrast for better visibility
-- **Focus Indicators**: Clear visual feedback for navigation
-- **Keyboard Navigation**: Full keyboard accessibility
-- **Screen Reader Support**: Compatible with screen readers
-- **Large Text**: Readable text sizes for all users
-
-## Future Enhancements
-
-Planned features for future updates:
-- Voice control integration
-- Gesture navigation support
-- Customizable remote mappings
-- Advanced search filters
-- Favorite channels management
-- Parental controls
-- Multi-language support
-
----
-
-For technical support or feature requests, please refer to the main project documentation.
+This optimization ensures a smooth, responsive experience that feels natural when using a TV remote control for navigation.

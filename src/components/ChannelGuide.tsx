@@ -1,41 +1,44 @@
-import React, { useState, useEffect } from 'react'
-import { ArrowLeft, Tv, Star, Search, User, Clock, Cloud } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Button } from './ui/button'
-import { Channel } from '../types'
+import React, { useState, useEffect, useRef } from 'react'
+import { ArrowLeft, Tv, Star, Search, User, Cloud } from 'lucide-react'
 
 interface ChannelGuideProps {
   onBack: () => void
-  onChannelSelect: (channel: Channel) => void
+  onChannelSelect: (channel: any) => void
   focusedElement?: string | null
   setFocusedElement?: (element: string | null) => void
+  selectedCategory?: string
 }
 
-interface Country {
+interface ChannelWithDetails {
   id: string
   name: string
-  flag: string
-  channelCount: number
-}
-
-interface ChannelWithDetails extends Channel {
+  category: string
+  streamUrl: string
+  logo: string
   views: string
   badges: string[]
   isFavorite: boolean
-  logo: string
+  description: string
+  channelNumber?: number
 }
 
 const ChannelGuide: React.FC<ChannelGuideProps> = ({
   onBack,
   onChannelSelect,
   focusedElement,
-  setFocusedElement
+  setFocusedElement,
+  selectedCategory
 }) => {
-  const [selectedCountry, setSelectedCountry] = useState('United States')
   const [selectedChannel, setSelectedChannel] = useState<ChannelWithDetails | null>(null)
+  const [focusedChannelIndex, setFocusedChannelIndex] = useState(0)
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [numberInput, setNumberInput] = useState('')
+  const [numberInputTimeout, setNumberInputTimeout] = useState<number | null>(null)
+  const channelRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const [isScrolling, setIsScrolling] = useState(false)
+  const [showFavorites, setShowFavorites] = useState(false)
 
-  // Update time every minute
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date())
@@ -43,74 +46,165 @@ const ChannelGuide: React.FC<ChannelGuideProps> = ({
     return () => clearInterval(timer)
   }, [])
 
-  const countries: Country[] = [
-    { id: 'us', name: 'United States', flag: '🇺🇸', channelCount: 147 },
-    { id: 'ukraine', name: 'Ukraine', flag: '🇺🇦', channelCount: 89 },
-    { id: 'brazil', name: 'Brazil', flag: '🇧🇷', channelCount: 156 },
-    { id: 'germany', name: 'Germany', flag: '🇩🇪', channelCount: 134 },
-    { id: 'france', name: 'France', flag: '🇫🇷', channelCount: 98 },
-    { id: 'portugal', name: 'Portugal', flag: '🇵🇹', channelCount: 67 },
-    { id: 'south-africa', name: 'South Africa', flag: '🇿🇦', channelCount: 45 },
-    { id: 'china', name: 'China', flag: '🇨🇳', channelCount: 234 }
-  ]
-
   const channels: ChannelWithDetails[] = [
     {
       id: '1',
-      name: 'Nat Geo Wild HD',
-      category: 'Documentary',
+      name: 'Somali National TV',
+      category: 'Somali',
       streamUrl: 'https://example.com/stream1',
-      logo: '/nat-geo-wild.png',
-      views: '+8.2M Views',
-      badges: ['HD', 'EPG'],
+      logo: 'somali',
+      views: '+15.2K Views',
+      badges: ['HD', 'EPG', 'LIVE'],
       isFavorite: true,
-      description: 'Wildlife and nature documentaries'
+      description: 'Official Somali national television channel',
+      channelNumber: 1
     },
     {
       id: '2',
-      name: 'Disney Channel',
-      category: 'Entertainment',
+      name: 'Universal TV Somalia',
+      category: 'Somali',
       streamUrl: 'https://example.com/stream2',
-      logo: '/disney.png',
-      views: '850K Views',
-      badges: ['4K', 'EPG', 'S'],
+      logo: 'universal',
+      views: '+8.5K Views',
+      badges: ['HD', 'EPG', 'LIVE'],
       isFavorite: false,
-      description: 'Family entertainment and cartoons'
+      description: 'Somali entertainment and news channel',
+      channelNumber: 2
     },
     {
       id: '3',
-      name: 'HBO Family',
-      category: 'Entertainment',
+      name: 'Horn Cable TV',
+      category: 'Somali',
       streamUrl: 'https://example.com/stream3',
-      logo: '/hbo.png',
-      views: '1.7M Views',
-      badges: ['HD', 'EPG'],
-      isFavorite: false,
-      description: 'Family movies and series'
+      logo: 'horn',
+      views: '+12.8K Views',
+      badges: ['HD', 'EPG', 'LIVE'],
+      isFavorite: true,
+      description: 'Somali news and current affairs',
+      channelNumber: 3
     },
     {
       id: '4',
-      name: 'CNN International',
-      category: 'News',
+      name: 'Somali Channel One',
+      category: 'Somali',
       streamUrl: 'https://example.com/stream4',
-      logo: '/cnn.png',
-      views: '2.1M Views',
-      badges: ['HD', 'EPG', 'LIVE'],
-      isFavorite: true,
-      description: 'International news coverage'
+      logo: 'channelone',
+      views: '+6.7K Views',
+      badges: ['HD', 'EPG'],
+      isFavorite: false,
+      description: 'Somali cultural and entertainment programming',
+      channelNumber: 4
     },
     {
       id: '5',
-      name: 'ESPN',
-      category: 'Sports',
+      name: 'Somali News Network',
+      category: 'Somali',
       streamUrl: 'https://example.com/stream5',
-      logo: '/espn.png',
-      views: '3.5M Views',
+      logo: 'snn',
+      views: '+9.3K Views',
       badges: ['HD', 'EPG', 'LIVE'],
       isFavorite: false,
-      description: 'Sports coverage and analysis'
+      description: '24/7 Somali news coverage',
+      channelNumber: 5
+    },
+    {
+      id: '6',
+      name: 'Somali Entertainment TV',
+      category: 'Somali',
+      streamUrl: 'https://example.com/stream6',
+      logo: 'setv',
+      views: '+4.2K Views',
+      badges: ['HD', 'EPG'],
+      isFavorite: false,
+      description: 'Somali movies, music and entertainment',
+      channelNumber: 6
+    },
+    {
+      id: '7',
+      name: 'Somali Sports Channel',
+      category: 'Somali',
+      streamUrl: 'https://example.com/stream7',
+      logo: 'ssc',
+      views: '+7.1K Views',
+      badges: ['HD', 'EPG', 'LIVE'],
+      isFavorite: true,
+      description: 'Somali sports coverage and analysis',
+      channelNumber: 7
+    },
+    {
+      id: '8',
+      name: 'Somali Educational TV',
+      category: 'Somali',
+      streamUrl: 'https://example.com/stream8',
+      logo: 'setv',
+      views: '+2.8K Views',
+      badges: ['HD', 'EPG'],
+      isFavorite: false,
+      description: 'Educational programming for all ages',
+      channelNumber: 8
     }
   ]
+
+  // Filter channels based on selected category and add automatic numbering
+  const getFilteredChannels = () => {
+    let filtered = channels
+    
+    // First filter by category if selected
+    if (selectedCategory) {
+      const categoryMap: { [key: string]: string[] } = {
+        'Somali TV': ['somali'],
+        'News': ['news', 'current affairs'],
+        'Sports': ['sports', 'football', 'basketball'],
+        'Wildlife': ['wildlife', 'nature', 'documentary'],
+        'Kids TV': ['kids', 'children', 'cartoon'],
+        'Movies': ['movies', 'entertainment', 'film'],
+        'Radio': ['radio', 'music', 'audio'],
+        'Docuseries': ['documentary', 'series', 'educational'],
+        'Entertainment': ['entertainment', 'comedy', 'variety']
+      }
+      
+      const allowedCategories = categoryMap[selectedCategory] || []
+      filtered = channels.filter(channel => 
+        allowedCategories.some(cat => 
+          channel.category.toLowerCase().includes(cat.toLowerCase()) ||
+          channel.name.toLowerCase().includes(cat.toLowerCase())
+        )
+      )
+    }
+    
+    // Then filter by favorites if showFavorites is true
+    if (showFavorites) {
+      filtered = filtered.filter(channel => channel.isFavorite)
+    }
+    
+    return filtered.map((channel, index) => ({
+      ...channel,
+      channelNumber: index + 1
+    }))
+  }
+
+  const filteredChannels = getFilteredChannels()
+
+  // Initialize with first channel selected
+  useEffect(() => {
+    if (filteredChannels.length > 0 && !selectedChannel) {
+      setSelectedChannel(filteredChannels[0])
+      setFocusedElement?.('channel-0')
+      // Center the first channel on mount with longer delay to ensure DOM is ready
+      setTimeout(() => scrollToChannel(0), 200)
+    }
+  }, [filteredChannels])
+
+  // Update selected channel when filtered channels change
+  useEffect(() => {
+    if (filteredChannels.length > 0) {
+      setSelectedChannel(filteredChannels[0])
+      setFocusedChannelIndex(0)
+      setFocusedElement?.('channel-0')
+      // Center the first channel when category or favorites filter changes with longer delay
+      setTimeout(() => scrollToChannel(0), 200)
+    }
+  }, [selectedCategory, showFavorites])
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', { 
@@ -120,254 +214,463 @@ const ChannelGuide: React.FC<ChannelGuideProps> = ({
     })
   }
 
-  const handleChannelFocus = (channel: ChannelWithDetails) => {
+  const scrollToChannel = (index: number) => {
+    if (!containerRef.current || !channelRefs.current[index]) return
+    
+    const container = containerRef.current
+    const element = channelRefs.current[index]
+    
+    if (element) {
+      const containerRect = container.getBoundingClientRect()
+      
+      // Calculate the center of the viewport
+      const containerCenter = containerRect.height / 2
+      
+      // Calculate the element's position relative to the container
+      const elementTop = element.offsetTop
+      const elementHeight = element.offsetHeight
+      const elementCenter = elementTop + (elementHeight / 2)
+      
+      // Calculate scroll position to center the element
+      const scrollPosition = elementCenter - containerCenter
+      
+      // Ensure we don't scroll past the top
+      const maxScrollTop = container.scrollHeight - container.clientHeight
+      const finalScrollPosition = Math.max(0, Math.min(scrollPosition, maxScrollTop))
+      
+      // Smooth scroll to center the focused channel
+      container.scrollTo({
+        top: finalScrollPosition,
+        behavior: 'smooth'
+      })
+    }
+  }
+
+  const findNearestChannelToCenter = () => {
+    if (!containerRef.current) return 0
+    
+    const container = containerRef.current
+    const containerRect = container.getBoundingClientRect()
+    const containerCenter = containerRect.height / 2
+    
+    let nearestIndex = 0
+    let minDistance = Infinity
+    
+    channelRefs.current.forEach((element, index) => {
+      if (element) {
+        const elementRect = element.getBoundingClientRect()
+        const elementCenter = elementRect.top + (elementRect.height / 2)
+        const distance = Math.abs(elementCenter - containerCenter)
+        
+        if (distance < minDistance) {
+          minDistance = distance
+          nearestIndex = index
+        }
+      }
+    })
+    
+    return nearestIndex
+  }
+
+  const handleScroll = () => {
+    if (isScrolling) return
+    
+    setIsScrolling(true)
+    
+    // Debounce the scroll event
+    setTimeout(() => {
+      const nearestIndex = findNearestChannelToCenter()
+      if (nearestIndex !== focusedChannelIndex) {
+        setFocusedChannelIndex(nearestIndex)
+        setSelectedChannel(filteredChannels[nearestIndex])
+        setFocusedElement?.(`channel-${nearestIndex}`)
+      }
+      setIsScrolling(false)
+    }, 150)
+  }
+
+  const handleChannelClick = (channel: ChannelWithDetails, index: number) => {
+    // Immediately update focus and selection
+    setFocusedChannelIndex(index)
     setSelectedChannel(channel)
+    setFocusedElement?.(`channel-${index}`)
+    
+    // Scroll to center the clicked channel with longer delay
+    setTimeout(() => scrollToChannel(index), 100)
+  }
+
+  const handleChannelSelect = (channel: ChannelWithDetails, index: number) => {
+    setSelectedChannel(channel)
+    setFocusedChannelIndex(index)
+    setFocusedElement?.(`channel-${index}`)
+    
+    // Ensure smooth scrolling to center the selected channel with longer delay
+    setTimeout(() => scrollToChannel(index), 100)
+  }
+
+  // Handle number pad input
+  const handleNumberInput = (number: string) => {
+    if (numberInputTimeout) {
+      clearTimeout(numberInputTimeout)
+    }
+
+    const newInput = numberInput + number
+    setNumberInput(newInput)
+
+    const channelNumber = parseInt(newInput)
+    const channelIndex = filteredChannels.findIndex(channel => channel.channelNumber === channelNumber)
+    
+    if (channelIndex !== -1) {
+      handleChannelSelect(filteredChannels[channelIndex], channelIndex)
+    }
+
+    const timeout = window.setTimeout(() => {
+      setNumberInput('')
+    }, 2000)
+    setNumberInputTimeout(timeout)
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key >= '0' && event.key <= '9') {
+      event.preventDefault()
+      handleNumberInput(event.key)
+      return
+    }
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      const nextIndex = Math.min(focusedChannelIndex + 1, filteredChannels.length - 1)
+      if (nextIndex !== focusedChannelIndex) {
+        handleChannelSelect(filteredChannels[nextIndex], nextIndex)
+      }
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      const prevIndex = Math.max(focusedChannelIndex - 1, 0)
+      if (prevIndex !== focusedChannelIndex) {
+        handleChannelSelect(filteredChannels[prevIndex], prevIndex)
+      }
+    } else if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      onChannelSelect(filteredChannels[focusedChannelIndex])
+    } else if (event.key === 'Escape') {
+      event.preventDefault()
+      onBack()
+    } else if (event.key === 'f' || event.key === 'F') {
+      event.preventDefault()
+      setShowFavorites(!showFavorites)
+    } else if (event.key === 'a' || event.key === 'A') {
+      event.preventDefault()
+      setShowFavorites(false)
+    }
+  }
+
+  const getChannelLogo = (logoType: string) => {
+    const logos: Record<string, JSX.Element> = {
+      'somali': (
+        <div className="w-full h-full bg-blue-600 rounded-lg flex items-center justify-center">
+          <div className="text-white font-bold text-xs">
+            <div>SOMALI</div>
+            <div className="text-[8px]">TV</div>
+          </div>
+        </div>
+      ),
+      'universal': (
+        <div className="w-full h-full bg-green-600 rounded-lg flex items-center justify-center">
+          <div className="text-white font-bold text-xs">UNIVERSAL</div>
+        </div>
+      ),
+      'horn': (
+        <div className="w-full h-full bg-red-600 rounded-lg flex items-center justify-center">
+          <div className="text-white font-bold text-xs">HORN</div>
+        </div>
+      ),
+      'channelone': (
+        <div className="w-full h-full bg-purple-600 rounded-lg flex items-center justify-center">
+          <div className="text-white font-bold text-xs">CHANNEL</div>
+        </div>
+      ),
+      'snn': (
+        <div className="w-full h-full bg-orange-600 rounded-lg flex items-center justify-center">
+          <div className="text-white font-bold text-xs">SNN</div>
+        </div>
+      ),
+      'setv': (
+        <div className="w-full h-full bg-teal-600 rounded-lg flex items-center justify-center">
+          <div className="text-white font-bold text-xs">SE TV</div>
+        </div>
+      ),
+      'ssc': (
+        <div className="w-full h-full bg-yellow-600 rounded-lg flex items-center justify-center">
+          <div className="text-black font-bold text-xs">SSC</div>
+        </div>
+      )
+    }
+    return logos[logoType] || (
+      <div className="w-full h-full bg-gray-600 rounded-lg flex items-center justify-center">
+        <div className="text-white font-bold text-xs">TV</div>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex">
-      {/* Left Sidebar - Countries */}
-      <div className="w-80 bg-gray-900 border-r border-gray-800 flex flex-col">
-        {/* Back Button */}
-        <div className="p-6 border-b border-gray-800">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onBack}
-            className={`w-12 h-12 text-white hover:bg-white/20 ${
-              focusedElement === 'back' ? 'ring-4 ring-blue-500 ring-opacity-50' : ''
-            }`}
-            onFocus={() => setFocusedElement?.('back')}
-            onBlur={() => focusedElement === 'back' && setFocusedElement?.(null)}
-            tabIndex={0}
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </Button>
-        </div>
-
-        {/* Title */}
-        <div className="p-6">
-          <h1 className="text-2xl font-bold text-white">Live TV's</h1>
-        </div>
-
-        {/* Navigation Icons */}
-        <div className="px-6 mb-6 flex space-x-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            className={`w-12 h-12 ${
-              focusedElement === 'tv-nav' ? 'bg-blue-600 text-white' : 'text-white hover:bg-white/20'
-            }`}
-            onFocus={() => setFocusedElement?.('tv-nav')}
-            onBlur={() => focusedElement === 'tv-nav' && setFocusedElement?.(null)}
-            tabIndex={0}
-          >
-            <Tv className="w-6 h-6" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className={`w-12 h-12 ${
-              focusedElement === 'favorites' ? 'bg-blue-600 text-white' : 'text-white hover:bg-white/20'
-            }`}
-            onFocus={() => setFocusedElement?.('favorites')}
-            onBlur={() => focusedElement === 'favorites' && setFocusedElement?.(null)}
-            tabIndex={0}
-          >
-            <Star className="w-6 h-6" />
-          </Button>
-        </div>
-
-        {/* Countries List */}
-        <div className="flex-1 overflow-y-auto">
-          {countries.map((country, index) => {
-            const isSelected = selectedCountry === country.name
-            const isFocused = focusedElement === `country-${index}`
-            
-            return (
-              <button
-                key={country.id}
-                onClick={() => setSelectedCountry(country.name)}
-                className={`w-full p-4 flex items-center space-x-4 transition-all duration-300 ${
-                  isSelected 
-                    ? 'bg-blue-600 text-white' 
-                    : isFocused 
-                      ? 'bg-gray-800 text-white' 
-                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                }`}
-                onFocus={() => setFocusedElement?.(`country-${index}`)}
-                onBlur={() => focusedElement === `country-${index}` && setFocusedElement?.(null)}
-                tabIndex={0}
-              >
-                <span className="text-2xl">{country.flag}</span>
-                <div className="flex-1 text-left">
-                  <div className={`font-medium ${isSelected ? 'text-white' : 'text-gray-300'}`}>
-                    {country.name}
-                  </div>
-                  <div className="text-sm opacity-70">
-                    {country.channelCount} Channels
-                  </div>
-                </div>
-              </button>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* Center Panel - Channel List */}
-      <div className="flex-1 bg-gray-950 flex flex-col">
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="space-y-4">
-            {channels.map((channel, index) => {
-              const isFocused = focusedElement === `channel-${index}`
-              
-              return (
-                <motion.div
-                  key={channel.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                >
-                  <button
-                    onClick={() => onChannelSelect(channel)}
-                    onFocus={() => {
-                      setFocusedElement?.(`channel-${index}`)
-                      handleChannelFocus(channel)
-                    }}
-                    onBlur={() => focusedElement === `channel-${index}` && setFocusedElement?.(null)}
-                    className={`w-full p-4 bg-gray-900 rounded-lg border-2 transition-all duration-300 flex items-center space-x-4 group ${
-                      isFocused 
-                        ? 'border-white bg-gray-800' 
-                        : 'border-transparent hover:border-gray-700'
-                    }`}
-                    tabIndex={0}
-                  >
-                    {/* Channel Logo */}
-                    <div className="w-16 h-16 bg-gray-800 rounded-lg flex items-center justify-center">
-                      <span className="text-xl font-bold text-gray-400">
-                        {channel.name.split(' ').map(word => word[0]).join('')}
-                      </span>
-                    </div>
-
-                    {/* Channel Info */}
-                    <div className="flex-1 text-left">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <h3 className={`text-lg font-semibold ${
-                          isFocused ? 'text-white' : 'text-gray-200'
-                        }`}>
-                          {channel.name}
-                        </h3>
-                        <span className="text-sm text-gray-400">
-                          {channel.views}
-                        </span>
-                      </div>
-
-                      {/* Badges */}
-                      <div className="flex items-center space-x-2">
-                        {channel.badges.map((badge, badgeIndex) => (
-                          <span
-                            key={badgeIndex}
-                            className={`px-2 py-1 rounded text-xs font-medium ${
-                              badge === 'HD' || badge === '4K' 
-                                ? 'bg-blue-600 text-white' 
-                                : badge === 'LIVE'
-                                ? 'bg-red-600 text-white'
-                                : 'bg-gray-700 text-gray-300'
-                            }`}
-                          >
-                            {badge}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Favorite Icon */}
-                    {channel.isFavorite && (
-                      <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                    )}
-                  </button>
-                </motion.div>
-              )
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Right Panel - Video Preview */}
-      <div className="w-96 bg-gray-900 border-l border-gray-800 flex flex-col">
-        {/* Header */}
-        <div className="p-6 border-b border-gray-800 flex items-center justify-between">
+    <div className="min-h-screen text-white flex bg-gray-900" onKeyDown={handleKeyDown} tabIndex={-1}>
+      {/* Header */}
+      <div className="absolute top-0 left-0 right-0 z-30 p-6 bg-gradient-to-b from-gray-900/90 to-transparent">
+        <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <span className="text-white font-semibold">{formatTime(currentTime)}</span>
-            <div className="flex items-center space-x-2">
-              <Cloud className="w-5 h-5 text-gray-400" />
-              <span className="text-white">24°</span>
+            <button
+              onClick={onBack}
+              className="w-14 h-14 rounded-full bg-gray-800/50 hover:bg-gray-700/50 flex items-center justify-center transition-all duration-300 text-gray-400 hover:text-white backdrop-blur-md border border-gray-600/30"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+                         <div>
+               <h1 className="text-3xl font-bold text-white">
+                 Somali TV Channels
+               </h1>
+               <p className="text-gray-400 text-sm mt-2">
+                 Use arrow keys to navigate • Type channel number • Press OK/Enter to select
+               </p>
+             </div>
+          </div>
+          
+          <div className="flex items-center space-x-4">
+            {/* Number Input Display */}
+            {numberInput && (
+                          <div className="flex items-center space-x-3 bg-blue-500/20 backdrop-blur-sm rounded-xl px-4 py-2 border border-blue-400/30">
+              <span className="text-blue-400 text-sm font-medium">Channel:</span>
+              <span className="text-white text-xl font-bold font-mono">{numberInput}</span>
+            </div>
+            )}
+            
+            <div className="flex items-center space-x-4 text-white text-lg">
+              <span className="font-mono font-bold">{formatTime(currentTime)}</span>
+              <div className="flex items-center space-x-2">
+                <Cloud className="w-6 h-6 text-gray-400" />
+                <span className="font-bold">24°</span>
+              </div>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center">
+              <User className="w-5 h-5" />
             </div>
           </div>
-          <div className="flex items-center space-x-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="w-10 h-10 text-white hover:bg-white/20"
+        </div>
+      </div>
+
+             {/* Center Panel - Channel Cards */}
+       <div className="flex-1 flex">
+                   {/* Floating Filter Buttons - Left Side */}
+          <div className="flex flex-col space-y-4 justify-center ml-8 mr-8">
+            {/* All TV Button */}
+            <button
+              onClick={() => setShowFavorites(false)}
+              className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 ${
+                !showFavorites
+                  ? 'bg-white/20 text-white shadow-lg shadow-white/20 backdrop-blur-md border border-white/30'
+                  : 'bg-gray-800/40 text-gray-400 hover:text-white hover:bg-gray-700/40 backdrop-blur-md border border-gray-600/30'
+              }`}
+              style={{
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)'
+              }}
             >
-              <Search className="w-5 h-5" />
-            </Button>
-            <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center">
-              <User className="w-5 h-5 text-white" />
+              <Tv className="w-6 h-6" />
+            </button>
+            
+            {/* Favorites Button */}
+            <button
+              onClick={() => setShowFavorites(true)}
+              className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 ${
+                showFavorites
+                  ? 'bg-yellow-500/20 text-yellow-400 shadow-lg shadow-yellow-500/20 backdrop-blur-md border border-yellow-400/30'
+                  : 'bg-gray-800/40 text-gray-400 hover:text-yellow-400 hover:bg-gray-700/40 backdrop-blur-md border border-gray-600/30'
+              }`}
+              style={{
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)'
+              }}
+            >
+              <Star className="w-6 h-6" />
+            </button>
+          </div>
+         
+         <div className="w-1/3 max-w-md">
+           <div 
+             ref={containerRef}
+             className="overflow-y-auto scrollbar-hide relative h-screen"
+             style={{
+               scrollBehavior: 'smooth'
+             }}
+             onScroll={handleScroll}
+           >
+             <div className="px-4 space-y-4" style={{ paddingTop: '40vh', paddingBottom: '40vh' }}>
+               {filteredChannels.map((channel, index) => {
+                const isFocused = focusedChannelIndex === index
+                const isSelected = selectedChannel?.id === channel.id
+                
+                return (
+                  <div key={channel.id} className="relative">
+                    {/* Focus indicator */}
+                    {isFocused && (
+                      <div 
+                        className="absolute left-[-1rem] top-1/2 w-1 h-16 bg-gradient-to-r from-white to-white/50 rounded-full transform -translate-y-1/2 shadow-lg shadow-white/30 z-20"
+                        style={{
+                          filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.6))'
+                        }}
+                      />
+                    )}
+                    
+                                                              <button
+                       ref={(el) => {
+                         channelRefs.current[index] = el
+                       }}
+                                               onClick={() => handleChannelClick(channel, index)}
+                       tabIndex={-1}
+                       className={`w-full h-40 rounded-xl p-8 border transition-all duration-500 ease-out group relative overflow-hidden ${
+                         isFocused
+                           ? 'bg-gray-800/40 border-white/30 shadow-2xl shadow-white/10 scale-105 backdrop-blur-xl opacity-100'
+                           : 'border-gray-700/30 hover:border-gray-600/40 hover:bg-gray-800/20 opacity-60 hover:opacity-80 backdrop-blur-md scale-95'
+                       }`}
+                       style={{
+                         background: isFocused 
+                           ? 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 50%, rgba(0,0,0,0.1) 100%), rgba(31, 41, 55, 0.4)'
+                           : 'linear-gradient(145deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 50%, rgba(0,0,0,0.02) 100%), rgba(31, 41, 55, 0.2)',
+                         backdropFilter: 'blur(20px) saturate(180%)',
+                         WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                         transformOrigin: 'center'
+                       }}
+                     >
+                       {/* Glass reflection effect */}
+                       <div 
+                         className={`absolute inset-0 rounded-xl transition-opacity duration-500 ${
+                           isFocused ? 'opacity-30' : 'opacity-5'
+                         }`}
+                         style={{
+                           background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.05) 100%)'
+                         }}
+                       />
+                       
+                       
+
+                       {/* Favorite star in top-right corner */}
+                       {channel.isFavorite && (
+                         <div className="absolute top-4 right-4 z-10">
+                           <Star className={`text-yellow-400 fill-current transition-all duration-500 ${
+                             isFocused ? 'w-5 h-5 opacity-100' : 'w-4 h-4 opacity-70'
+                           }`} 
+                           style={{
+                             filter: isFocused ? 'drop-shadow(0 0 8px rgba(251, 191, 36, 0.6))' : 'none'
+                           }}
+                           />
+                         </div>
+                       )}
+                       
+                                                <div className="flex items-center h-full relative z-10">
+                           {/* Channel Logo - Left Side */}
+                           <div className={`mr-8 transition-all duration-500 ${
+                             isFocused ? 'w-20 h-20' : 'w-16 h-16'
+                           }`}>
+                             {getChannelLogo(channel.logo)}
+                           </div>
+
+                                                       {/* Channel Info - Right Side */}
+                            <div className="flex-1 text-left flex flex-col justify-between h-full">
+                              {/* Top Section - Name and Views */}
+                              <div>
+                                {/* Channel Name */}
+                                <h3 className={`font-bold text-white mb-2 transition-all duration-500 ${
+                                  isFocused ? 'text-xl' : 'text-lg'
+                                }`}>
+                                  {channel.name}
+                                </h3>
+
+                                {/* View Count */}
+                                <p className={`text-white/70 transition-all duration-500 ${
+                                  isFocused ? 'text-base opacity-100' : 'text-sm opacity-80'
+                                }`}>
+                                  {channel.views}
+                                </p>
+                              </div>
+
+                              {/* Bottom Section - Badges */}
+                              <div className="flex flex-wrap gap-1.5 mt-auto">
+                                {channel.badges.map((badge, badgeIndex) => (
+                                  <span
+                                    key={badgeIndex}
+                                    className={`px-2 py-1 rounded-sm font-semibold text-[10px] ${
+                                      badge === 'HD' || badge === '4K' 
+                                        ? 'bg-blue-500/90 text-white shadow-lg shadow-blue-500/30' 
+                                        : badge === 'LIVE'
+                                        ? 'bg-red-500/90 text-white shadow-lg shadow-red-500/30'
+                                        : 'bg-white/25 text-white shadow-lg shadow-white/10'
+                                    }`}
+                                    style={{
+                                      backdropFilter: 'blur(10px)',
+                                      WebkitBackdropFilter: 'blur(10px)'
+                                    }}
+                                  >
+                                    {badge}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                         </div>
+                     </button>
+                  </div>
+                )
+              })}
             </div>
           </div>
         </div>
 
-        {/* Video Preview */}
-        <div className="flex-1 relative overflow-hidden">
+                 {/* Right Panel - Video Preview */}
+         <div className="w-2/3 relative">
           {selectedChannel ? (
-            <>
-              {/* Background Image */}
-              <div className="absolute inset-0 bg-gradient-to-b from-gray-800 to-black">
-                <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-24 h-24 bg-gray-700 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                      <span className="text-2xl font-bold text-gray-400">
-                        {selectedChannel.name.split(' ').map(word => word[0]).join('')}
-                      </span>
-                    </div>
-                    <h3 className="text-xl font-semibold text-white mb-2">
-                      {selectedChannel.name}
-                    </h3>
-                  </div>
-                </div>
-              </div>
+            <div 
+              className="w-full h-full relative overflow-hidden bg-gray-800/40 backdrop-blur-sm border-l border-gray-700/40"
+              style={{
+                backgroundImage: 'url("data:image/svg+xml,%3Csvg width="400" height="300" xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3Cpattern id="cheetah" patternUnits="userSpaceOnUse" width="200" height="150"%3E%3Crect width="200" height="150" fill="%23D4A574"/%3E%3Ccircle cx="40" cy="40" r="16" fill="%238B4513" opacity="0.7"/%3E%3Ccircle cx="120" cy="70" r="12" fill="%23654321" opacity="0.8"/%3E%3Ccircle cx="160" cy="140" r="14" fill="%238B4513" opacity="0.6"/%3E%3Ccircle cx="60" cy="120" r="10" fill="%23654321" opacity="0.9"/%3E%3Ccircle cx="180" cy="60" r="8" fill="%238B4513" opacity="0.5"/%3E%3Ccircle cx="20" cy="100" r="12" fill="%23654321" opacity="0.7"/%3E%3C/pattern%3E%3C/defs%3E%3Crect width="400" height="300" fill="url(%23cheetah)"/%3E%3C/svg%3E")',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            >
+              {/* Dark overlay for better text readability */}
+              <div className="absolute inset-0 bg-gray-900/40 z-10"></div>
 
-              {/* Now Playing Overlay */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6">
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="text-lg font-semibold text-white mb-2">
-                      Animals and Nature
-                    </h4>
-                    <p className="text-sm text-gray-300 leading-relaxed">
-                      Big cat expert Boone Smith follows a strange trail of carnage and death to track cats in Patagonia. He documents their behavior - from kittens to killers.
-                    </p>
-                  </div>
+              {/* Bottom Content */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-gray-900/90 via-gray-900/70 to-transparent z-20">
+                <div className="text-white">
+                  <p className="text-sm text-white/80 mb-2">Now Playing</p>
+                  <h2 className="text-2xl font-bold mb-4">{selectedChannel.name}</h2>
+                  <p className="text-sm text-white/90 leading-relaxed mb-6">
+                    {selectedChannel.description === 'Official Somali national television channel' 
+                      ? 'Live coverage of Somali national news, cultural programs, and government announcements. Broadcasting in Somali language with English subtitles.'
+                      : selectedChannel.description === 'Somali entertainment and news channel'
+                      ? 'Popular Somali entertainment channel featuring local music, dramas, and cultural shows. Also includes news updates and current affairs.'
+                      : selectedChannel.description === 'Somali news and current affairs'
+                      ? 'Comprehensive coverage of Somali politics, business, and social issues. In-depth analysis and live reporting from across the country.'
+                      : selectedChannel.description
+                    }
+                  </p>
 
                   {/* Progress Bar */}
                   <div className="space-y-2">
-                    <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                    <div className="w-full h-1 bg-white/30 rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-blue-500 rounded-full"
-                        style={{ width: '70%' }}
+                        className="h-full bg-white rounded-full transition-all duration-300"
+                        style={{ width: '65%' }}
                       ></div>
                     </div>
-                    <div className="flex justify-between text-sm text-gray-400">
+                    <div className="flex justify-between text-xs text-white/70">
                       <span>01:52:37</span>
                       <span>02:10:46</span>
                     </div>
                   </div>
                 </div>
               </div>
-            </>
+            </div>
           ) : (
-            <div className="flex items-center justify-center h-full">
+            <div className="w-full h-full flex items-center justify-center bg-gray-800/20 backdrop-blur-sm border-l border-gray-700/40">
               <div className="text-center text-gray-400">
                 <Tv className="w-16 h-16 mx-auto mb-4 opacity-50" />
                 <p>Select a channel to preview</p>

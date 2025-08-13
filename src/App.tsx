@@ -352,23 +352,35 @@ function App() {
     }
   }
 
-  const handleCategorySelect = (category: string) => {
+  const handleCategorySelect = (category: string, channelNumber?: number) => {
     setSelectedCategory(category)
-    if (category === "Live TV's") {
+    
+    // If channelNumber is provided, route to specific channel guide
+    if (channelNumber) {
       setCurrentView('channel-guide')
       setFocusedElement('country-0')
       setCurrentFocusIndex(0)
       setIsMovieMode(false)
-    } else if (category === "Movies") {
-      setCurrentView('channels')
-      setFocusedElement('channel-0')
-      setCurrentFocusIndex(0)
-      setIsMovieMode(true)
+      // Store the selected category for filtering channels
+      console.log(`Selected channel ${channelNumber}: ${category}`)
     } else {
-      setCurrentView('channels')
-      setFocusedElement('channel-0')
-      setCurrentFocusIndex(0)
-      setIsMovieMode(false)
+      // Legacy behavior for backward compatibility
+      if (category === "Live TV's") {
+        setCurrentView('channel-guide')
+        setFocusedElement('country-0')
+        setCurrentFocusIndex(0)
+        setIsMovieMode(false)
+      } else if (category === "Movies") {
+        setCurrentView('channels')
+        setFocusedElement('channel-0')
+        setCurrentFocusIndex(0)
+        setIsMovieMode(true)
+      } else {
+        setCurrentView('channels')
+        setFocusedElement('channel-0')
+        setCurrentFocusIndex(0)
+        setIsMovieMode(false)
+      }
     }
   }
 
@@ -483,6 +495,7 @@ function App() {
             onChannelSelect={handleChannelSelect}
             focusedElement={focusedElement}
             setFocusedElement={setFocusedElement}
+            selectedCategory={selectedCategory}
           />
         )}
       </AnimatePresence>
