@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { ArrowLeft, Tv, Star, Search, User, Cloud } from 'lucide-react'
+import { Channel } from '../types'
 
 interface ChannelGuideProps {
   onBack: () => void
-  onChannelSelect: (channel: any) => void
+  onChannelSelect: (channel: Channel) => void
   focusedElement?: string | null
   setFocusedElement?: (element: string | null) => void
   selectedCategory?: string
@@ -302,6 +303,11 @@ const ChannelGuide: React.FC<ChannelGuideProps> = ({
     setTimeout(() => scrollToChannel(index), 100)
   }
 
+  const handleChannelDoubleClick = (channel: ChannelWithDetails) => {
+    // Double click to play the channel
+    handleChannelPlay(channel)
+  }
+
   const handleChannelSelect = (channel: ChannelWithDetails, index: number) => {
     setSelectedChannel(channel)
     setFocusedChannelIndex(index)
@@ -309,6 +315,23 @@ const ChannelGuide: React.FC<ChannelGuideProps> = ({
     
     // Ensure smooth scrolling to center the selected channel with longer delay
     setTimeout(() => scrollToChannel(index), 100)
+  }
+
+  const handleChannelPlay = (channel: ChannelWithDetails) => {
+    // Convert ChannelWithDetails to Channel format for video player
+    const channelForPlayer: Channel = {
+      id: channel.id,
+      name: channel.name,
+      category: channel.category,
+      streamUrl: channel.streamUrl,
+      logo: channel.logo,
+      description: channel.description,
+      isLive: channel.badges.includes('LIVE'),
+      viewers: parseInt(channel.views.replace(/[^0-9]/g, '')) || 0
+    }
+    
+    // Call the parent's onChannelSelect to route to video player
+    onChannelSelect(channelForPlayer)
   }
 
   // Handle number pad input
@@ -354,7 +377,7 @@ const ChannelGuide: React.FC<ChannelGuideProps> = ({
       }
     } else if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
-      onChannelSelect(filteredChannels[focusedChannelIndex])
+      handleChannelPlay(filteredChannels[focusedChannelIndex])
     } else if (event.key === 'Escape') {
       event.preventDefault()
       onBack()
@@ -535,12 +558,13 @@ const ChannelGuide: React.FC<ChannelGuideProps> = ({
                       />
                     )}
                     
-                                                              <button
-                       ref={(el) => {
-                         channelRefs.current[index] = el
-                       }}
-                                               onClick={() => handleChannelClick(channel, index)}
-                       tabIndex={-1}
+                                                                                                                             <button
+                        ref={(el) => {
+                          channelRefs.current[index] = el
+                        }}
+                                                onClick={() => handleChannelClick(channel, index)}
+                                                onDoubleClick={() => handleChannelDoubleClick(channel)}
+                        tabIndex={-1}
                        className={`w-full h-40 rounded-xl p-8 border transition-all duration-500 ease-out group relative overflow-hidden ${
                          isFocused
                            ? 'bg-gray-800/40 border-white/30 shadow-2xl shadow-white/10 scale-105 backdrop-blur-xl opacity-100'

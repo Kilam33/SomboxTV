@@ -18,7 +18,7 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null)
-  const [isPlayerFullscreen, setIsPlayerFullscreen] = useState(false)
+  const [previousView, setPreviousView] = useState<AppView>('home')
   const [filteredChannels, setFilteredChannels] = useState(mockChannels)
   const [isMovieMode, setIsMovieMode] = useState(false)
   
@@ -431,31 +431,43 @@ function App() {
   }, [selectedCategory, searchQuery])
 
   const handleChannelSelect = (channel: Channel) => {
+    setPreviousView(currentView)
     setSelectedChannel(channel)
     setCurrentView('player')
     setFocusedElement(null)
   }
 
   const handleClosePlayer = () => {
+    console.log('Close button clicked, returning to home')
     setSelectedChannel(null)
-    setIsPlayerFullscreen(false)
-    // Return to previous view
-    if (currentView === 'channel-guide') {
-      setCurrentView('channel-guide')
-      setFocusedElement('channel-0')
-    } else {
-      setCurrentView('channels')
-      setFocusedElement(`channel-${currentFocusIndex}`)
-    }
+    // Return to home screen
+    setCurrentView('home')
+    setFocusedElement('category-0')
+    setCurrentFocusIndex(0)
   }
 
-  const handleToggleFullscreen = () => {
-    setIsPlayerFullscreen(!isPlayerFullscreen)
+  const handleBackToChannels = () => {
+    console.log('Back button clicked, previous view:', previousView)
+    setSelectedChannel(null)
+    // Return to previous view
+    if (previousView === 'channel-guide') {
+      setCurrentView('channel-guide')
+      setFocusedElement('channel-0')
+    } else if (previousView === 'channels') {
+      setCurrentView('channels')
+      setFocusedElement(`channel-${currentFocusIndex}`)
+    } else {
+      // Fallback to home
+      setCurrentView('home')
+      setFocusedElement('category-0')
+      setCurrentFocusIndex(0)
+    }
   }
 
   const handlePlay = (contentId: string) => {
     // Find and play featured content
     const featuredChannel = mockChannels[0] // For demo, play first channel
+    setPreviousView(currentView)
     setSelectedChannel(featuredChannel)
     setCurrentView('player')
   }
@@ -574,14 +586,11 @@ function App() {
       {/* Video Player */}
       <AnimatePresence>
         {currentView === 'player' && selectedChannel && (
-          <div className={isPlayerFullscreen ? 'fixed inset-0 z-50' : 'container mx-auto px-4 py-8'}>
-            <VideoPlayer
-              channel={selectedChannel}
-              onClose={handleClosePlayer}
-              isFullscreen={isPlayerFullscreen}
-              onToggleFullscreen={handleToggleFullscreen}
-            />
-          </div>
+          <VideoPlayer
+            channel={selectedChannel}
+            onClose={handleClosePlayer}
+            onBack={handleBackToChannels}
+          />
         )}
       </AnimatePresence>
 
